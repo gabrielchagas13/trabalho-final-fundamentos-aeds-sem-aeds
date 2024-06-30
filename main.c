@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 // Estruturas
 typedef struct {
@@ -29,50 +28,6 @@ typedef struct {
 } Estadia;
 
 // Funções
-int gerarCodigoUnicoCliente() {
-    FILE *file = fopen("clientes.dat", "rb");
-    if (file == NULL) {
-        return 1; // Primeiro código
-    }
-
-    Cliente cliente;
-    int maxCodigo = 0;
-    while (fread(&cliente, sizeof(Cliente), 1, file)) {
-        if (cliente.codigo > maxCodigo) {
-            maxCodigo = cliente.codigo;
-        }
-    }
-    fclose(file);
-    return maxCodigo + 1;
-}
-
-int gerarCodigoUnicoFuncionario() {
-    FILE *file = fopen("funcionarios.dat", "rb");
-    if (file == NULL) {
-        return 1; // Primeiro código
-    }
-
-    Funcionario funcionario;
-    int maxCodigo = 0;
-    while (fread(&funcionario, sizeof(Funcionario), 1, file)) {
-        if (funcionario.codigo > maxCodigo) {
-            maxCodigo = funcionario.codigo;
-        }
-    }
-    fclose(file);
-    return maxCodigo + 1;
-}
-
-int calcularDiarias(char *dataEntrada, char *dataSaida) {
-    struct tm tmEntrada, tmSaida;
-    strptime(dataEntrada, "%d/%m/%Y", &tmEntrada);
-    strptime(dataSaida, "%d/%m/%Y", &tmSaida);
-    time_t tEntrada = mktime(&tmEntrada);
-    time_t tSaida = mktime(&tmSaida);
-    double seconds = difftime(tSaida, tEntrada);
-    return (seconds / (60 * 60 * 24));
-}
-
 void cadastrarCliente() {
     Cliente cliente;
     FILE *file = fopen("clientes.dat", "ab");
@@ -81,8 +36,8 @@ void cadastrarCliente() {
         return;
     }
 
-    cliente.codigo = gerarCodigoUnicoCliente();
-    printf("Codigo do Cliente: %d\n", cliente.codigo);
+    printf("Codigo do Cliente: ");
+    scanf("%d", &cliente.codigo);
     printf("Nome: ");
     scanf(" %[^\n]", cliente.nome);
     printf("Endereco: ");
@@ -104,8 +59,8 @@ void cadastrarFuncionario() {
         return;
     }
 
-    funcionario.codigo = gerarCodigoUnicoFuncionario();
-    printf("Codigo do Funcionario: %d\n", funcionario.codigo);
+    printf("Codigo do Funcionario: ");
+    scanf("%d", &funcionario.codigo);
     printf("Nome: ");
     scanf(" %[^\n]", funcionario.nome);
     printf("Telefone: ");
@@ -131,22 +86,16 @@ void cadastrarEstadia() {
 
     printf("Codigo da Estadia: ");
     scanf("%d", &estadia.codigo);
-    printf("Codigo do Cliente: ");
-    scanf("%d", &estadia.codigoCliente);
-    printf("Quantidade de Hospedes: ");
-    int quantidadeHospedes;
-    scanf("%d", &quantidadeHospedes);
-
-    // Aqui você deve verificar a disponibilidade de quartos para a quantidade de hóspedes
-    // Vamos assumir que o quarto número 101 está disponível para simplificar
-    estadia.numeroQuarto = 101;
-
     printf("Data de Entrada (dd/mm/yyyy): ");
     scanf(" %[^\n]", estadia.dataEntrada);
     printf("Data de Saida (dd/mm/yyyy): ");
     scanf(" %[^\n]", estadia.dataSaida);
-
-    estadia.quantidadeDiarias = calcularDiarias(estadia.dataEntrada, estadia.dataSaida);
+    printf("Quantidade de Diarias: ");
+    scanf("%d", &estadia.quantidadeDiarias);
+    printf("Codigo do Cliente: ");
+    scanf("%d", &estadia.codigoCliente);
+    printf("Numero do Quarto: ");
+    scanf("%d", &estadia.numeroQuarto);
 
     fwrite(&estadia, sizeof(Estadia), 1, file);
     fclose(file);
